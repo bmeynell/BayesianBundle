@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="meynell_bayesian.string_lexer.class">Meynell\BayesianBundle\Service\Classifier\Lexer\StringLexer</parameter>
+        <parameter key="meynell_bayesian.string_degenerator.class">Meynell\BayesianBundle\Service\Classifier\Degenerator\StringDegenerator</parameter>
+        <parameter key="meynell_bayesian.classifier.class">Meynell\BayesianBundle\Service\Classifier</parameter>
+    </parameters>
+
+    <services>
+        <service id="meynell_bayesian.string_lexer" class="%meynell_bayesian.string_lexer.class%">
+            <call method="setMinSize">
+                <argument>%meynell_bayesian.lexer.min_size%</argument>
+            </call>
+            <call method="setMaxSize">
+                <argument>%meynell_bayesian.lexer.max_size%</argument>
+            </call>
+            <call method="setAllowNumbers">
+                <argument>%meynell_bayesian.lexer.allow_numbers%</argument>
+            </call>
+            <call method="setGetUris">
+                <argument>%meynell_bayesian.lexer.get_uris%</argument>
+            </call>
+            <call method="setGetHtml">
+                <argument>%meynell_bayesian.lexer.get_html%</argument>
+            </call>
+            <call method="setGetBbcode">
+                <argument>%meynell_bayesian.lexer.get_bbcode%</argument>
+            </call>
+        </service>
+        <service id="meynell_bayesian.string_degenerator" class="%meynell_bayesian.string_degenerator.class%">
+            <call method="setMultibyte">
+                <argument>%meynell_bayesian.degenerator.multibyte%</argument>
+            </call>
+            <call method="setEncoding">
+                <argument>%meynell_bayesian.degenerator.encoding%</argument>
+            </call>
+        </service>
+        <service id="meynell_bayesian.classifier" class="%meynell_bayesian.classifier.class%">
+            <argument type="service" id="meynell_bayesian.string_lexer" />
+            <argument type="service" id="meynell_bayesian.string_degenerator" />
+            <call method="setMinDev">
+                <argument>%meynell_bayesian.min_dev%</argument>
+            </call>
+            <call method="setRobS">
+                <argument>%meynell_bayesian.rob_s%</argument>
+            </call>
+            <call method="setRobX">
+                <argument>%meynell_bayesian.rob_x%</argument>
+            </call>
+            <call method="setUseRelevant">
+                <argument>%meynell_bayesian.use_relevant%</argument>
+            </call>
+        </service>
+    </services>
+</container>
