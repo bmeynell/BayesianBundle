@@ -21,14 +21,12 @@ class StringDegenerator
 	
 	public function degenerate(array $words)
 	{
-	
 		$degenerates = array();
 		
 		foreach($words as $word)
-			$degenerates[$word] = $this->_degenerate_word($word);
+			$degenerates[$word] = $this->degenerateWord($word);
 		
 		return $degenerates;
-		
 	}
 	
 	/**
@@ -39,7 +37,7 @@ class StringDegenerator
 	 * @return array The list without duplicates
 	 */
 	 
-	protected function _delete_duplicates($word, $list) 
+	protected function deleteDuplicates($word, $list) 
 	{
 	
 		$list_processed = array();
@@ -62,7 +60,7 @@ class StringDegenerator
 	 * @return array An array of degenerated words
 	 */
 	
-	protected function _degenerate_word($word)
+	protected function degenerateWord($word)
 	{
 	
 		# Check for any stored words so the process doesn't have to repeat
@@ -92,7 +90,7 @@ class StringDegenerator
 		array_push($upper_lower, $first);
 		
 		# Delete duplicate upper/lower versions
-		$degenerate = $this->_delete_duplicates($word, $upper_lower);
+		$degenerate = $this->deleteDuplicates($word, $upper_lower);
 		
 		# Append the original word
 		array_push($degenerate, $word);
@@ -130,7 +128,7 @@ class StringDegenerator
 		
 		# Some degenerates are the same as the original word. These don't have
 		# to be fetched, so we create a new array with only new tokens
-		$degenerate = $this->_delete_duplicates($word, $degenerate);
+		$degenerate = $this->deleteDuplicates($word, $degenerate);
 		
 		# Store the list of degenerates for the token to prevent unnecessary re-processing
 		$this->degenerates[$word] = $degenerate;

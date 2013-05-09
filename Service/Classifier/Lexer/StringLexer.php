@@ -16,8 +16,8 @@ class StringLexer
     protected $get_html;
     protected $get_bbcode;
 
-	private $_tokens         = NULL;
-	private $_processed_text = NULL;
+	private $tokens = array();
+	private $text   = '';
 
 	# The regular expressions we use to split the text to tokens
 	public $regexp = array(
@@ -49,38 +49,34 @@ class StringLexer
 		if(empty($text) === TRUE) {
 			return self::LEXER_TEXT_EMPTY;
         }
-		
+
 		# Re-convert the text to the original characters coded in UTF-8, as
 		# they have been coded in html entities during the post process
-		$this->_processed_text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+		$this->text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 		
 		# Reset the token list
-		$this->_tokens = array();
+		$this->tokens = array();
 		
 		if($this->get_uris === TRUE) {
 			# Get URIs
-			$this->_get_uris($this->_processed_text);
+			$this->getUris($this->text);
 		}
 		
 		if($this->get_html === TRUE) {
 			# Get HTML
-			$this->_get_markup($this->_processed_text, $this->regexp['html']);
+			$this->getMarkup($this->text, $this->regexp['html']);
 		}
 		
 		if($this->get_bbcode === TRUE) {
 			# Get BBCode
-			$this->_get_markup($this->_processed_text, $this->regexp['bbcode']);
+			$this->getMarkup($this->text, $this->regexp['bbcode']);
 		}
 		
 		# We always want to do a raw split of the (remaining) text, so:
-		$this->_raw_split($this->_processed_text);
-		
-		# Be sure not to return an empty array
-		if(count($this->_tokens) == 0)
-			$this->_tokens['b8*no_tokens'] = 1;
+		$this->rawSplit($this->text);
 		
 		# Return a list of all found tokens
-		return $this->_tokens;
+		return $this->tokens;
     }
 
 	/**
@@ -91,9 +87,8 @@ class StringLexer
 	 * @return boolean Returns TRUE if the token is valid, otherwise returns FALSE.
 	 */
 	
-	private function _is_valid($token)
+	private function isValid($token)
 	{
-	
 		# Just to be sure that the token's name won't collide with b8's internal variables
 		if(substr($token, 0, 3) == 'b8*')
 			return FALSE;
@@ -113,7 +108,6 @@ class StringLexer
 		
 		# Token is okay
 		return TRUE;
-		
 	}
 	
 	/**
@@ -126,22 +120,22 @@ class StringLexer
 	 * @return void
 	 */
 	
-	private function _add_token($token, $remove, $word_to_remove)
+	private function addToken($token, $remove, $word_to_remove)
 	{
 	
 		# Check the validity of the token
-		if($this->_is_valid($token) === FALSE)
+		if($this->isValid($token) === FALSE)
 			return;
 		
 		# Add it to the list or increase it's counter
-		if(isset($this->_tokens[$token]) === FALSE)
-			$this->_tokens[$token] = 1;
+		if(isset($this->tokens[$token]) === FALSE)
+			$this->tokens[$token] = 1;
 		else
-			$this->_tokens[$token] += 1;
+			$this->tokens[$token] += 1;
 			
 		# If requested, remove the word or it's original version from the text
 		if($remove === TRUE)
-			$this->_processed_text = str_replace($word_to_remove, '', $this->_processed_text);
+			$this->text = str_replace($word_to_remove, '', $this->text);
 			
 	}
 	
@@ -153,7 +147,7 @@ class StringLexer
 	 * @return void
 	 */
 	
-	private function _get_uris($text)
+	private function getUris($text)
 	{
 	
 		# Find URIs
@@ -165,10 +159,10 @@ class StringLexer
 			$word = rtrim($word, '.');
 			
 			# Try to add the found tokens to the list
-			$this->_add_token($word, TRUE, $word);
+			$this->addToken($word, TRUE, $word);
 			
 			# Also process the parts of the found URIs
-			$this->_raw_split($word);
+			$this->rawSplit($word);
 			
 		}
 		
@@ -183,7 +177,7 @@ class StringLexer
 	 * @return void
 	 */
 	
-	private function _get_markup($text, $regexp)
+	private function getMarkup($text, $regexp)
 	{
 	
 		# Search for the markup
@@ -201,7 +195,7 @@ class StringLexer
 			}
 			
 			# Try to add the found tokens to the list
-			$this->_add_token($word, TRUE, $actual_word);
+			$this->addToken($word, TRUE, $actual_word);
 			
 		}
 		
@@ -215,11 +209,11 @@ class StringLexer
 	 * @return void
 	 */
 	
-	private function _raw_split($text)
+	private function rawSplit($text)
 	{
 		foreach(preg_split($this->regexp['raw_split'], $text) as $word) {
 			# Check the word and add it to the token list if it's valid
-			$this->_add_token($word, FALSE, NULL);
+			$this->addToken($word, FALSE, NULL);
 		}
 	}
 

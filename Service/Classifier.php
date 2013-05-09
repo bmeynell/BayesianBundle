@@ -31,6 +31,10 @@ class Classifier
         $this->degenerator = $degenerator;
     }
 
+    public function tokenize($text)
+    {
+    }
+
 	/**
 	 * Classifies a text
 	 *
@@ -49,8 +53,9 @@ class Classifier
 
 		# Check if the lexer failed
 		# (if so, $tokens will be a lexer error code, if not, $tokens will be an array)
-		if(!is_array($tokens))
+		if (!is_array($tokens) || !count($tokens)) {
 			return $tokens;
+        }
 
 		# Fetch all available data for the token set from the database
 		$this->_token_data = $this->get(array_keys($tokens));
