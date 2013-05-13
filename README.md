@@ -41,9 +41,23 @@ meynell_bayesian.string_lexer                   container Meynell\BayesianBundle
 
 The most useful of which is meynell_bayesian.classifier which contains the following public methods:
 
+  * tokenize($text)
+  * classify($tokens, $token_data, $nb_ham, $nb_spam)
   * learn()
   * unlearn()
-  * classify()
+
+#### Workflow
+
+$tokens_in_text = $this->tokenize($text);
+$token_data = /// return persisted tokens that exist in db and are in text
+$missing_tokens = $this->getMissingTokens($tokens_in_text, $token_data); // returns tokens you do not yet have persisted
+if (count($missing_tokens)) {
+    $degenerates = $this->getDegenerates($missing_tokens);
+    $degenerates_list = // lookup $degenerates in db ...
+    $token_data = array_merge($token_data, $degenerates_list);
+}
+$token_data = $bc->get($tokens, $token_data);
+$score = $bc->classify($tokens_in_text, $token_data, $nb_ham, $nb_spam);
 
 #### Notes
 

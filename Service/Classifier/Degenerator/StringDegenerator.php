@@ -62,10 +62,10 @@ class StringDegenerator
 	
 	protected function degenerateWord($word)
 	{
-	
 		# Check for any stored words so the process doesn't have to repeat
-		if(isset($this->degenerates[$word]) === TRUE)
+		if(isset($this->degenerates[$word]) === TRUE) {
 			return $this->degenerates[$word];
+        }
 		
 		# Add different versions of upper and lower case and ucfirst
 		
@@ -134,7 +134,6 @@ class StringDegenerator
 		$this->degenerates[$word] = $degenerate;
 		
 		return $degenerate;
-		
 	}
 
     public function setMultibyte($multibyte)

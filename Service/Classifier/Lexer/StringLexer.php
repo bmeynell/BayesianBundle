@@ -79,6 +79,20 @@ class StringLexer
 		return $this->tokens;
     }
 
+    public function getAllTokens($text)
+    {
+        $all_tokens = array();
+        $tokens = $this->getTokens($text);
+        foreach ($tokens as $token => $count) {
+            for ($i=0; $i<$count; $i++)
+            {
+                $all_tokens[] = $token;
+            }
+        }
+
+        return $all_tokens;
+    }
+
 	/**
 	 * Validates a token.
 	 *
