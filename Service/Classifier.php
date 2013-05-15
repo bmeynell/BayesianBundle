@@ -282,8 +282,12 @@ class Classifier
 		if($texts_spam > 0)
 			$rel_spam = $data['count_spam'] / $texts_spam;
 			
-		$rating = $rel_spam / ($rel_ham + $rel_spam);
-		
+        $rating = 0;
+        $rel_ham_rel_spam = $rel_ham + $rel_spam;
+        if ($rel_ham_rel_spam > 0) {
+		    $rating = $rel_spam / $rel_ham_rel_spam;
+        }
+
 		# Calculate the better probability proposed by Mr. Robinson
 		$all = $data['count_ham'] + $data['count_spam'];
 		return (($this->rob_s * $this->rob_x) + ($all * $rating)) / ($this->rob_s + $all);
