@@ -83,10 +83,12 @@ class StringLexer
     {
         $all_tokens = array();
         $tokens = $this->getTokens($text);
-        foreach ($tokens as $token => $count) {
-            for ($i=0; $i<$count; $i++)
-            {
-                $all_tokens[] = $token;
+        if (count($tokens)) {
+            foreach ($tokens as $token => $count) {
+                for ($i=0; $i<$count; $i++)
+                {
+                    $all_tokens[] = $token;
+                }
             }
         }
 
